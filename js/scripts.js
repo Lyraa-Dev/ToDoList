@@ -1,4 +1,3 @@
-
 const todoForm = document.querySelector("#todo-form")
 const todoInput = document.querySelector("#todo-input")
 const todoList = document.querySelector("#todo-list")
@@ -9,6 +8,7 @@ const searchInput = document.getElementById("search-input")
 let tarefa = document.querySelectorAll('.todo')
 let filterSelect = document.getElementById("filter-select");
 let eraseButton = document.getElementById("erase-button");
+let isFiltering = false;
 
 let oldInputValue;
 //criar uma nova tarefa
@@ -110,10 +110,36 @@ editForm.addEventListener("submit", (e) => {
     }
     toggleForms();
 })
+
+function updateTaskDisplay() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedValue = filterSelect.value;
+
+    for (let task of tarefa) {
+        let titleElement = task.querySelector('h3'); 
+        let title = titleElement.textContent.toLowerCase();
+        
+        const matchesSearch = title.includes(searchTerm);
+        const isDone = task.classList.contains("done");
+        
+        if ((selectedValue === "all" || (selectedValue === "done" && isDone) || (selectedValue === "todo" && !isDone)) &&
+            (searchTerm === '' || matchesSearch)) {
+            task.style.display = 'flex';
+        } else {
+            task.style.display = 'none';
+        }
+    }
+}
+
 // Sistema de pesquisa pela barra de pesquisa
 searchInput.addEventListener('input', filterForms);
 
 function filterForms() {
+    if (isFiltering) {
+        return;
+    }
+
+    isFiltering = true;
 
     if(searchInput.value !==''){
     const searchTerm = searchInput.value.toLowerCase();
@@ -132,6 +158,10 @@ function filterForms() {
             task.style.display = 'flex';
         }
     }
+    filterTasks();
+
+    isFiltering = false;
+    updateTaskDisplay();
 }
 //Botão para apagar o que está escrito na barra de pesquisa
 eraseButton.addEventListener("click", (e) => {
@@ -143,15 +173,30 @@ eraseButton.addEventListener("click", (e) => {
 filterSelect.addEventListener("change", filterTasks);
 
 function filterTasks() {
+    if (isFiltering) {
+        return;
+    }
+
+    isFiltering = true;
     const selectedValue = filterSelect.value;
 
     if (selectedValue === "all") {
         showAllTasks();
+        searchInput.value = "";
+        filterForms();
     } else if (selectedValue === "done") {
         showDoneTasks();
+        searchInput.value = "";
+        filterForms();
     } else if (selectedValue === "todo") {
         showToDoTasks();
+        searchInput.value = "";
+        filterForms();
     }
+    filterForms(); // Chamando a função filterForms para ajustar a filtragem de pesquisa
+
+    isFiltering = false;
+    
 }
 
 function showAllTasks() {
@@ -178,5 +223,6 @@ function showToDoTasks() {
             task.style.display = 'none';
         }
     }
+    
 }
 
