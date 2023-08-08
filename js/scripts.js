@@ -1,4 +1,3 @@
-
 const todoForm = document.querySelector("#todo-form")
 const todoInput = document.querySelector("#todo-input")
 const todoList = document.querySelector("#todo-list")
@@ -8,6 +7,7 @@ const cancelEditBtn= document.querySelector("#cancel-edit-btn")
 const searchInput = document.getElementById("search-input")
 let tarefa = document.querySelectorAll('.todo')
 let filterSelect = document.getElementById("filter-select");
+let eraseButton = document.getElementById("erase-button");
 
 let oldInputValue;
 //criar uma nova tarefa
@@ -132,6 +132,12 @@ function filterForms() {
         }
     }
 }
+//Botão para apagar o que está escrito na barra de pesquisa
+eraseButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    searchInput.value = ""; 
+    filterForms();
+});
 //Filter select para a seção filtro, mostrando todas as tarefas, tarefas concluidas ou tarefas a concluir
 filterSelect.addEventListener("change", filterTasks);
 
@@ -172,4 +178,3 @@ function showToDoTasks() {
         }
     }
 }
-
